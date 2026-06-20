@@ -66,14 +66,6 @@ export function collectItem(level: Level, x: number, y: number, w: number, h: nu
     }
   }
 
-  // Check other corners too
-  const corners = [
-    Math.floor((x + w - 1) / TILE_SIZE),
-    Math.floor(y / TILE_SIZE),
-    Math.floor(x / TILE_SIZE),
-    Math.floor((y + h - 1) / TILE_SIZE),
-  ];
-
   const tx2 = Math.floor((x + w - 1) / TILE_SIZE);
   const ty2 = Math.floor((y + h - 1) / TILE_SIZE);
 

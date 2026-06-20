@@ -26,6 +26,7 @@ export default function GameCanvas({ level, onGameEnd }: GameCanvasProps) {
 
   // Reset game state when level changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGameState(createGameState(level));
   }, [level]);
 
@@ -63,33 +64,33 @@ export default function GameCanvas({ level, onGameEnd }: GameCanvasProps) {
     if (!ctx) return;
 
     let animationId: number;
-    let lastGameState = gameState;
 
     const gameLoop = () => {
-      const newState = { ...gameState };
-      const prevWon = newState.won;
-      const prevGameOver = newState.gameOver;
+      setGameState((prevState) => {
+        const newState = { ...prevState };
+        const prevWon = newState.won;
+        const prevGameOver = newState.gameOver;
 
-      updateGameState(newState, inputRef.current);
+        updateGameState(newState, inputRef.current);
 
-      // Check end condition
-      if ((newState.won || newState.gameOver) && (!prevWon && !prevGameOver)) {
-        const timeInSeconds = Math.floor(newState.time / 60);
-        onGameEnd(newState.won, newState.score, timeInSeconds);
-      }
+        // Check end condition
+        if ((newState.won || newState.gameOver) && (!prevWon && !prevGameOver)) {
+          const timeInSeconds = Math.floor(newState.time / 60);
+          onGameEnd(newState.won, newState.score, timeInSeconds);
+        }
 
-      setGameState(newState);
-      lastGameState = newState;
+        // Render
+        render(ctx, canvas, newState);
+        return newState;
+      });
 
-      // Render
-      render(ctx, canvas, newState);
       animationId = requestAnimationFrame(gameLoop);
     };
 
     animationId = requestAnimationFrame(gameLoop);
 
     return () => cancelAnimationFrame(animationId);
-  }, [onGameEnd]);
+  }, [onGameEnd, level]);
 
   return (
     <div className="flex flex-col items-center gap-4">
